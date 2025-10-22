@@ -1,0 +1,28 @@
+﻿@using Heatmap.Models
+
+<table class="heatmap-table">
+    @foreach (var row in Data)
+    {
+        <tr>
+            @foreach (var cell in row)
+            {
+                var cssClass = $"heatmap-{GetBucket(cell.Value)}";
+                <td class="@cssClass" title="@cell.Label">
+                    @cell.Value
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+@code {
+    [Parameter]
+    public List<List<HeatMapDataPoint>> Data { get; set; } = new();
+
+    private int GetBucket(int value)
+    {
+        // Map to 0–10 scale for CSS class naming
+        var bucket = Math.Clamp(value / 10, 0, 10);
+        return bucket;
+    }
+}

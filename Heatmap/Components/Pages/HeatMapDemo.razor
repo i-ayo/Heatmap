@@ -1,0 +1,46 @@
+﻿@page "/heatmap-demo"
+@using Heatmap.Models
+@using Heatmap.Components
+
+<h3>Heatmap Demo</h3>
+
+<HeatMap @key="MockData" Data="@MockData" />
+
+<button class="btn btn-primary" @onclick="Randomize">Randomize</button>
+
+@code {
+    private List<List<HeatMapDataPoint>> MockData = new();
+
+    protected override void OnInitialized()
+    {
+        BuildMockData(5, 5); // 5x5 grid
+    }
+
+    private void BuildMockData(int rows, int cols)
+    {
+        var rnd = new Random();
+        var newData = new List<List<HeatMapDataPoint>>();
+
+        for (int r = 0; r < rows; r++)
+        {
+            var row = new List<HeatMapDataPoint>();
+            for (int c = 0; c < cols; c++)
+            {
+                row.Add(new HeatMapDataPoint
+                    {
+                        Value = rnd.Next(0, 101),
+                        Label = $"R{r}C{c}"
+                    });
+            }
+            newData.Add(row);
+        }
+
+        MockData = newData;
+    }
+
+    private async Task Randomize()
+    {
+        BuildMockData(MockData.Count, MockData.First().Count);
+        await InvokeAsync(StateHasChanged);
+    }
+}

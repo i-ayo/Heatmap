@@ -1,0 +1,42 @@
+﻿@using System.Globalization
+
+<div class="statcard"
+     role="button"
+     tabindex="0"
+     aria-label="@AriaLabel"
+     @onclick="OnClickHandler">
+    @if (IsLoading)
+    {
+        <div class="statcard-loading">Loading...</div>
+    }
+    else
+    {
+        <div class="statcard-content">
+            @if (!string.IsNullOrWhiteSpace(Icon))
+            {
+                <div class="statcard-icon">@((MarkupString)Icon)</div>
+            }
+
+            <div class="statcard-value">@FormattedValue</div>
+            <div class="statcard-label">@Label</div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public double Value { get; set; }
+    [Parameter] public string Icon { get; set; } = ""; // SVG or emoji
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter] public string AriaLabel { get; set; } = string.Empty;
+    [Parameter] public string? Format { get; set; } = "N0"; // default = number, no decimals
+
+    private string FormattedValue => Value.ToString(Format, CultureInfo.InvariantCulture);
+
+    private async Task OnClickHandler()
+    {
+        if (OnClick.HasDelegate)
+            await OnClick.InvokeAsync();
+    }
+}

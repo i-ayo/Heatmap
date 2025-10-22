@@ -1,0 +1,54 @@
+﻿@page "/stats"
+@using Heatmap.Components
+
+<h3>Statistics Dashboard</h3>
+
+@if (IsLoading)
+{
+    <div>Loading stats...</div>
+}
+else
+{
+    <div class="statcard-grid">
+        @foreach (var stat in Stats)
+        {
+            <StatCard Label="@stat.Label"
+                      Value="@stat.Value"
+                      Icon="@stat.Icon"
+                      OnClick="() => OnCardClick(stat)"
+                      Format="@stat.Format"
+                      AriaLabel="@stat.Label" />
+        }
+    </div>
+
+    <div class="chart-outline">
+        <h4>Chart Outline</h4>
+        <div class="chart-placeholder">[Chart goes here]</div>
+    </div>
+}
+
+@code {
+    private bool IsLoading = true;
+
+    private record StatInfo(string Label, double Value, string Icon, string Format);
+
+    private List<StatInfo> Stats = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000); // simulate loading
+        Stats = new()
+        {
+            new("Total Users", 15890, "👥", "N0"),
+            new("Revenue", 23124.56, "💰", "C0"),
+            new("Active Sessions", 983, "🖥️", "N0"),
+            new("Conversion Rate", 7.23, "📈", "P1")
+        };
+        IsLoading = false;
+    }
+
+    private void OnCardClick(StatInfo stat)
+    {
+        Console.WriteLine($"Clicked: {stat.Label}");
+    }
+}
